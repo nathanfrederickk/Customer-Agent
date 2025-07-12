@@ -1,0 +1,9 @@
+# Core functionality
+python-dotenv
+chromadb
+
+# LlamaIndex Core and specific integrations
+llama-index-core
+llama-index-llms-gemini
+llama-index-embeddings-gemini
+llama-index-vector-stores-chroma

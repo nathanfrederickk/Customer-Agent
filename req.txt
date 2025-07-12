@@ -1,1 +1,0 @@
-pip install llama-index llama-index-vector-stores-chroma llama-index-llms-google llama-index-embeddings-google beautifulsoup4
