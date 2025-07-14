@@ -29,14 +29,39 @@ Settings.llm = Gemini(model="models/gemini-2.5-flash")
 Settings.embed_model = GeminiEmbedding(model_name="models/embedding-001")
 print("⚙️  LlamaIndex components configured.")
 
-# Connect to the existing vector store
+# --- 2. Setup Persistent ChromaDB and Load/Create Index ---
 db = chromadb.PersistentClient(path="../chroma_db")
 chroma_collection = db.get_or_create_collection("visa_agent_collection")
 vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
-index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
-print("✅ Index loaded from ChromaDB.")
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
-# --- 2. Define the Graph State ---
+# Check if the collection is empty. If so, ingest documents.
+if chroma_collection.count() == 0:
+    print("📄 Collection is empty. Ingesting new documents... (This happens only once)")
+    try:
+        # Load documents from file
+        reader = SimpleDirectoryReader(input_files=["../data/485Visa.md"])
+        documents = reader.load_data()
+        print(f"📄 Loaded {len(documents)} document(s).")
+        
+        # Create index from documents. This populates the ChromaDB collection.
+        index = VectorStoreIndex.from_documents(
+            documents, storage_context=storage_context
+        )
+        print("✅ Index created and stored successfully.")
+    except Exception as e: 
+        print(f"❌ Error during initial document ingestion: {e}")
+        exit()
+else:
+    # If the collection is not empty, load the index directly from the vector store.
+    print("✅ Loading index from existing ChromaDB collection.")
+    index = VectorStoreIndex.from_vector_store(
+        vector_store=vector_store,
+    )
+    print("✅ Index loaded successfully.")
+
+
+# --- 3. Define the Graph State ---
 class GraphState(TypedDict):
     question: str
     context_str: str
@@ -44,7 +69,7 @@ class GraphState(TypedDict):
     drafted_answer: str
     final_decision: dict
 
-# --- 3. Define Supporting Nodes and Edges ---
+# --- 4. Define Supporting Nodes and Edges ---
 
 def escalation_node(state: GraphState):
     print("--- ESCALATING TO HUMAN ---")
@@ -56,7 +81,7 @@ def should_escalate(state: GraphState):
     decision = state["final_decision"].get("decision", "escalate")
     return "escalate" if decision == "escalate" else "end"
 
-# --- 4. Build the Graph ---
+# --- 5. Build the Graph ---
 
 workflow = StateGraph(GraphState)
 
@@ -82,7 +107,7 @@ workflow.add_edge("escalate", END)
 app = workflow.compile()
 print("\n🚀 LangGraph workflow compiled!")
 
-# --- 5. Run the Application ---
+# --- 6. Run the Application ---
 
 if __name__ == "__main__":
     inputs = {
