@@ -65,10 +65,30 @@ else:
     print("✅ Index loaded successfully.")
 
 
-# --- 5. Create the Query Engine ---
-# This part remains the same.
-query_engine = index.as_query_engine(streaming=True)
-print("\n🚀 Query engine is ready! Ask a question about the Temporary Graduate visa.")
+from llama_index.core import PromptTemplate
+
+try:
+    with open("./src/system_prompt.md", "r") as f:
+        SYSTEM_PROMPT = f.read()
+    print("📝 System prompt loaded from system_prompt.md.")
+except FileNotFoundError:
+    print("❌ Error: system_prompt.md not found in the root directory.")
+    exit()
+
+# --- 6. Create the Query Engine ---
+# We now create a prompt template and pass it to the query engine
+qa_template = PromptTemplate(SYSTEM_PROMPT)
+
+query_engine = index.as_query_engine(
+    text_qa_template=qa_template,
+    streaming=True
+)
+
+print("\n🚀 Query engine with PLANNING is ready! Ask a complex question.")
+
+# # --- 5. Create the Query Engine ---
+# query_engine = index.as_query_engine(streaming=True)
+# print("\n🚀 Query engine is ready! Ask a question about the Temporary Graduate visa.")
 print("   Type 'exit' to quit.\n")
 
 
