@@ -70,7 +70,6 @@ class GraphState(TypedDict):
     final_decision: dict
 
 # --- 4. Define Supporting Nodes and Edges ---
-
 def escalation_node(state: GraphState):
     print("--- ESCALATING TO HUMAN ---")
     print("Reason:", state["final_decision"].get("reason", "No reason provided."))
@@ -82,7 +81,6 @@ def should_escalate(state: GraphState):
     return "escalate" if decision == "escalate" else "end"
 
 # --- 5. Build the Graph ---
-
 workflow = StateGraph(GraphState)
 
 # Use partial to pass the 'index' object to the customer agent node

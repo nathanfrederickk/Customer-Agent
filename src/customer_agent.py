@@ -20,8 +20,6 @@ def customer_agent_node(state, index):
     context_str = "\n\n".join([n.get_content() for n in retrieved_nodes])
 
     # Create the query engine with the specific drafting prompt
-
-    # Create the query engine with the specific drafting prompt
     try:
         with open("./src/customer_prompt.md", "r") as f:
             CUSTOMER_AGENT_PROMPT = f.read()
