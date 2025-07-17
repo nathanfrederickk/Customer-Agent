@@ -1,9 +1,10 @@
-# Core functionality
 python-dotenv
 chromadb
+langgraph
+pytz
 
 # LlamaIndex Core and specific integrations
 llama-index-core
+llama-index-vector-stores-chroma
 llama-index-llms-gemini
 llama-index-embeddings-gemini
-llama-index-vector-stores-chroma

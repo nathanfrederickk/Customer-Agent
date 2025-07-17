@@ -39,3 +39,17 @@ def manager_agent_node(state):
     except json.JSONDecodeError:
         print("Manager failed to generate valid JSON. Defaulting to escalate.")
         return {"final_decision": {"decision": "escalate", "reason": "Invalid format from manager."}}
+
+# <checklist_for_escalation>
+# 1. Does the answer contain ANY uncertainty markers? ("usually", "might", "in most cases")
+# 2. Is there risk of financial/legal harm if wrong?
+# 3. Has user expressed frustration 2+ times?
+# 4. Does the query involve edge cases not in our KB?
+# 5. Would human verification add significant value?
+# </checklist_for_escalation>
+
+# <decision_rules>
+# - If 3+ "yes" → Escalate to human
+# - If 2 "yes" → Request clarification from user
+# - Otherwise → Approve response
+# </decision_rules>
