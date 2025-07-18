@@ -52,6 +52,7 @@ coverage.xml
 .pytest_cache/
 
 # Environments
+credentials.json
 .env
 .venv
 env/
