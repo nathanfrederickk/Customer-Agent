@@ -36,7 +36,7 @@ def customer_agent_node(state, index):
     
     # Generate the draft answer
     drafted_answer = query_engine.query(question)
-
+    print(drafted_answer)
     return {
         "context_str": context_str,
         "drafted_answer": str(drafted_answer)
