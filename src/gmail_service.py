@@ -41,7 +41,7 @@ def get_latest_email(service, user_id="me"):
     Fetches the most recent unread email and returns its details as a dictionary.
     """
     try:
-        results = service.users().messages().list(userId=user_id, q="is:unread", maxResults=1).execute()
+        results = service.users().messages().list(userId=user_id, q="from:nathanfrederick3@gmail.com", maxResults=1).execute()
         messages = results.get("messages", [])
 
         if not messages:
