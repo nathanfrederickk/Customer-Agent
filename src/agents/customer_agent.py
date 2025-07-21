@@ -21,7 +21,7 @@ def customer_agent_node(state, index):
 
     # Create the query engine with the specific drafting prompt
     try:
-        with open("./src/customer_prompt.md", "r") as f:
+        with open("./src/agents/customer_prompt.md", "r") as f:
             CUSTOMER_AGENT_PROMPT = f.read()
         print("📝 System prompt loaded from customer_prompt.md.")
     except FileNotFoundError:

@@ -15,7 +15,7 @@ def manager_agent_node(state):
     
 
     try:
-        with open("./src/manager_prompt.md", "r") as f:
+        with open("./src/agents/manager_prompt.md", "r") as f:
             MANAGER_AGENT_PROMPT = f.read()
             print("📝 System prompt loaded from manager_prompt.md.")
     except FileNotFoundError:

@@ -8,9 +8,9 @@ from langgraph.graph import StateGraph, END
 from functools import partial
 
 # --- Import Agent Nodes ---
-from guard_agent import guardrail_node, GuardrailDecision # Import the class too
-from customer_agent import customer_agent_node
-from manager_agent import manager_agent_node
+from agents.guard_agent import guardrail_node, GuardrailDecision 
+from agents.customer_agent import customer_agent_node
+from agents.manager_agent import manager_agent_node
 
 # --- Import LlamaIndex Components ---
 from llama_index.core import (
@@ -59,7 +59,7 @@ class GraphState(TypedDict):
     context_str: str
     chat_history: str
     drafted_answer: str
-    guardrail_decision: GuardrailDecision # More specific type hint
+    guardrail_decision: GuardrailDecision 
     final_decision: dict
 
 # --- 4. Define Supporting Nodes and Edges ---

@@ -25,7 +25,7 @@ def guardrail_node(state):
     
      # Create the query engine with the specific drafting prompt
     try:
-        with open("./src/guard_prompt.md", "r") as f:
+        with open("./src/agents/guard_prompt.md", "r") as f:
             GUARDRAIL_PROMPT = f.read()
         print("📝 System prompt loaded from guard_prompt.md.")
     except FileNotFoundError:
