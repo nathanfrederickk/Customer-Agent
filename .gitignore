@@ -53,6 +53,7 @@ coverage.xml
 
 # Environments
 credentials.json
+token.json
 .env
 .venv
 env/
