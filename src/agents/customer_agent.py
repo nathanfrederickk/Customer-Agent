@@ -2,7 +2,7 @@
 
 from llama_index.core import PromptTemplate
 
-def customer_agent_node(state, index):
+def customer_agent_node(state, index, llm):
     """
     Node for the Customer Agent. Retrieves context and drafts an answer.
     
@@ -34,7 +34,9 @@ def customer_agent_node(state, index):
     # Instead of retrieving manually, we configure the query engine to do it.
     # This allows LlamaIndex to use more advanced strategies.
     query_engine = index.as_query_engine(
-        # text_qa_template=qa_template,
+        llm =llm,
+        text_qa_template = qa_template,
+        similarity_top_k=4
     )
     
     # Generate the draft answer. The engine now handles both retrieval and synthesis.

@@ -84,7 +84,7 @@ def should_escalate(state: GraphState):
 def build_graph(gmail_service):
     workflow = StateGraph(GraphState)
 
-    customer_agent_with_index = partial(customer_agent_node, index=index)
+    customer_agent_with_index = partial(customer_agent_node, index=index, llm = Settings.llm)
     email_sender_with_service = partial(email_sender_node, service=gmail_service) # NEW
 
     workflow.add_node("guardrail", guardrail_node)
