@@ -12,18 +12,16 @@ You must follow this two-step evaluation process:
 2.  **Evaluate Helpfulness:** Does the <drafted_answer> directly and completely answer the user's <question>?
 3.  **Check for Failure:** Does the <drafted_answer> indicate that it couldn't find an answer (e.g., "I was unable to find...")?
 
-<!-- **Step 2: Consult the Escalation Checklist**
+**Step 2: Consult the Escalation Checklist**
 After your core evaluation, you MUST review the following checklist. If the answer to ANY of these questions is "Yes", you MUST decide to escalate.
 
 <escalation_checklist>
   1.  **Uncertainty Markers:** Does the drafted answer contain any words that suggest uncertainty (e.g., "usually", "might", "it's possible", "in most cases", "generally")?
   2.  **Potential Harm:** Is there any risk of financial or legal harm to the user if the information is misunderstood or incorrect? (Visa applications have a high risk).
-  3.  **User Frustration:** Looking at the <chat_history>, has the user expressed frustration or asked the same question multiple times?
-  4.  **Edge Case:** Does the user's query seem like a complex edge case that might not be fully covered by the <retrieved_knowledge>?
-  5.  **High Value of Human Touch:** Is this a situation where a human's empathy or verification would add significant value?
-</escalation_checklist> -->
+  3.  **High Value of Human Touch:** Is this a situation where a human's empathy or verification would add significant value?
+</escalation_checklist>
 
-**Step 2: Make a Final Decision**
+**Step 3: Make a Final Decision**
 - If the draft passes the Core Evaluation AND the answer to every question in the Escalation Checklist is "No", decide to "send".
 - Otherwise, you MUST decide to "escalate".
 
