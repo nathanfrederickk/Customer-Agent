@@ -11,7 +11,7 @@ from functools import partial
 from agents.guard_agent import guardrail_node, GuardrailDecision
 from agents.customer_agent import customer_agent_node
 from agents.manager_agent import manager_agent_node
-from email_sender_node import email_sender_node # NEW
+from email_sender_node import email_sender_node 
 
 # --- Import LlamaIndex Components ---
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageContext, Settings
@@ -51,7 +51,7 @@ else:
 # --- 3. Define the Graph State ---
 class GraphState(TypedDict):
     question: str
-    original_email: dict # NEW: To store details of the email being processed
+    original_email: dict 
     context_str: str
     chat_history: str
     drafted_answer: str
@@ -84,13 +84,13 @@ def should_escalate(state: GraphState):
 def build_graph(gmail_service):
     workflow = StateGraph(GraphState)
 
-    customer_agent_with_index = partial(customer_agent_node, index=index, llm = Settings.llm)
-    email_sender_with_service = partial(email_sender_node, service=gmail_service) # NEW
+    customer_agent_with_index = partial(customer_agent_node, index=index)
+    email_sender_with_service = partial(email_sender_node, service=gmail_service) 
 
     workflow.add_node("guardrail", guardrail_node)
     workflow.add_node("customer_agent", customer_agent_with_index)
     workflow.add_node("manager_agent", manager_agent_node)
-    workflow.add_node("send_email", email_sender_with_service) # NEW
+    workflow.add_node("send_email", email_sender_with_service) 
     workflow.add_node("escalate", escalation_node)
 
     workflow.set_entry_point("guardrail")
@@ -109,5 +109,4 @@ def build_graph(gmail_service):
     workflow.add_edge("escalate", END)
 
     return workflow.compile()
-
 

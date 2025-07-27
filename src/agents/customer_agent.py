@@ -1,56 +1,57 @@
-# src/agents/customer_agent.py
+from llama_index.core import Settings
+from llama_index.core.prompts import PromptTemplate
+from llama_index.core.retrievers import VectorIndexRetriever
 
-from llama_index.core import PromptTemplate
+def extract_first_name(sender: str) -> str:
+    """Extracts first name from email sender string"""
+    default_name = "User"
+    if '<' in sender:
+        name_part = sender.split('<')[0].strip().replace('"', '')
+        return name_part.split()[0] if name_part else default_name
+    else:
+        return sender.split('@')[0].split('.')[0]
 
-def customer_agent_node(state, index, llm):
+def customer_agent_node(state, index):
     """
-    Node for the Customer Agent. Retrieves context and drafts an answer.
-    
-    Args:
-        state (GraphState): The current state of the graph.
-        index (VectorStoreIndex): The LlamaIndex object to query.
-
-    Returns:
-        dict: A dictionary with the context and the drafted answer.
+    Node for the Customer Agent. Uses an explicit retrieve -> format -> complete
+    pipeline to correctly handle custom variables.
     """
     print("--- DRAFTING ANSWER ---")
     question = state["question"]
+    sender = state["original_email"]["sender"]
+    first_name = extract_first_name(sender)
+    print(f"📝 Parsed user's first name: {first_name}")
 
-    # Load the prompt from the external file
+    # Load the prompt template string from the file
     try:
         with open("./src/agents/customer_prompt.md", "r") as f:
-            CUSTOMER_AGENT_PROMPT = f.read()
+            template_str = f.read()
         print("📝 System prompt loaded from customer_prompt.md.")
     except FileNotFoundError:
-        print("❌ Error: customer_prompt.md not found in the 'src/agents' directory.")
-        # Return a failure state for the manager to see
         return {
             "context_str": "System Error: Prompt file not found.",
             "drafted_answer": "I was unable to find a definitive answer due to a system error."
         }
 
-    qa_template = PromptTemplate(CUSTOMER_AGENT_PROMPT)
+    # 1. Create the PromptTemplate instance
+    qa_template = PromptTemplate(template_str)
+    
+    # 2. Explicitly retrieve the context
+    retriever = VectorIndexRetriever(index=index, similarity_top_k=2)
+    retrieved_nodes = retriever.retrieve(question)
+    context_str = "\n\n".join([node.get_content() for node in retrieved_nodes])
 
-    # Instead of retrieving manually, we configure the query engine to do it.
-    # This allows LlamaIndex to use more advanced strategies.
-    query_engine = index.as_query_engine(
-        llm =llm,
-        text_qa_template = qa_template,
-        similarity_top_k=4
+    # 3. Manually format the prompt with all variables
+    final_prompt = qa_template.format(
+        context_str=context_str,
+        query_str=question,
+        user_first_name=first_name
     )
     
-    # Generate the draft answer. The engine now handles both retrieval and synthesis.
-    response_object = query_engine.query(question)
-    
-    # Extract the drafted answer and the context that was actually used
-    drafted_answer = str(response_object)
-    print(response_object)
-    context_str = "\n\n".join([node.get_content() for node in response_object.source_nodes])
-
-    # --- A great debugging tip for the future ---
-    # print("\n--- RETRIEVED CONTEXT ---")
-    # print(context_str)
-    # print("-------------------------\n")
+    # 4. Call the LLM directly with the fully formatted prompt
+    response = Settings.llm.complete(final_prompt)
+    drafted_answer = str(response)
+    print(drafted_answer)
 
     return {
         "context_str": context_str,

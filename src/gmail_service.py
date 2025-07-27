@@ -54,7 +54,6 @@ def get_latest_email(service, user_id="me"):
         payload = msg.get("payload", {})
         headers = payload.get("headers", [])
         
-        # CORRECTED: This function now returns a dictionary
         email_data = {
             "id": msg_id,
             "thread_id": msg.get("threadId"),
