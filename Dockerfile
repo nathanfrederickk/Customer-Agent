@@ -11,8 +11,8 @@ FROM python:3.11-slim-bookworm
 WORKDIR /app
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # --- Stage 3: Install Dependencies ---
 # Copy only the requirements file first to leverage Docker's layer caching.
