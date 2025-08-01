@@ -1,11 +1,13 @@
-#!/usr/bin/env node
-
 const cdk = require('aws-cdk-lib');
-const {CustomerAgentStack } = require('../lib/cdk-stack');
+const path = require('path');
+
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
+const { CustomerAgentStack } = require('../lib/cdk-stack');
+
 const app = new cdk.App();
-new CustomerAgentStack(app, 'CustomerAgentStack', {
+
+new CustomerAgentStack (app, 'CustomerAgentStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
