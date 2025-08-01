@@ -19,7 +19,7 @@ def email_sender_node(state, service):
     original_email = state["original_email"]
     drafted_answer = state["drafted_answer"]
     
-    recipient = original_email["sender"] # We reply to the original sender
+    recipient = original_email["sender"] # Reply to the original sender
     subject = "Re: " + original_email["subject"]
     thread_id = original_email["thread_id"]
 
