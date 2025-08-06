@@ -2,6 +2,7 @@
 python-dotenv
 chromadb
 langgraph
+psycopg2-binary
 pytz
 
 # LlamaIndex Core and specific integrations

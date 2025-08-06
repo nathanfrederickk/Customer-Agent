@@ -1,5 +1,6 @@
 import os.path
 import base64
+import json
 from email.message import EmailMessage
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -14,26 +15,27 @@ SCOPES = [
 ]
 
 def get_gmail_service():
-    """Authenticates with the Gmail API and returns a service object."""
-    creds = None
-    if os.path.exists("token.json"):
-        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
-    
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-            creds = flow.run_local_server(port=0)
-        
-        with open("token.json", "w") as token:
-            token.write(creds.to_json())
+    """
+    Authenticates with the Gmail API using a token stored in an environment variable.
+    This method is designed for server-side execution for short-term tests.
+    """
+    token_json_str = os.getenv("GMAIL_TOKEN_JSON")
+    if not token_json_str:
+        print("❌ GMAIL_TOKEN_JSON environment variable not set.")
+        return None
 
     try:
+        # Load the credentials directly from the JSON string
+        creds_info = json.loads(token_json_str)
+        creds = Credentials.from_authorized_user_info(creds_info, SCOPES)
+        
         service = build("gmail", "v1", credentials=creds)
         return service
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"❌ Error parsing token credentials: {e}")
+        return None
     except HttpError as error:
-        print(f"An error occurred: {error}")
+        print(f"An error occurred during authentication: {error}")
         return None
 
 def get_latest_email(service, user_id="me"):
