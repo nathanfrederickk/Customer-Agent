@@ -4,11 +4,11 @@ from src.gmail_service import get_gmail_service
 from src.database_service import setup_database, get_conversation_history, save_message
 
 # --- Global Setup ---
-print("Lambda container starting up...")
+print("Lambda container starting up.")
 setup_database()
 gmail_service = get_gmail_service()
 app = build_graph(gmail_service=gmail_service)
-print("🚀 LangGraph workflow compiled and ready.")
+print("LangGraph workflow compiled and ready.")
 
 def handler(event, context):
     """

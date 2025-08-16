@@ -1,5 +1,3 @@
-# In file: utils/secrets_manager.py
-
 import boto3
 import json
 import os

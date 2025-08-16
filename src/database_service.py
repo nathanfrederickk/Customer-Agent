@@ -4,7 +4,7 @@ from utils.secret_manager import get_secret
 
 db_secret_data = get_secret("prod/CustomerAgent/DatabasePassword")
 
-# --- Database Connection ---
+# database connection
 DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = db_secret_data['password']
@@ -14,7 +14,7 @@ DB_PORT = os.getenv("DB_PORT")
 
 def get_db_connection():
     """Establishes a connection to the PostgreSQL database using environment variables."""
-    # Check if all required environment variables are set. This is a crucial health check.
+    # check if all required environment variables are set
     if not all([DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT]):
         print("❌ Database environment variables are not fully configured. Cannot connect.")
         return None

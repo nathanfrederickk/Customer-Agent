@@ -1,5 +1,3 @@
-# src/gmail_service.py
-
 import os.path
 import base64
 import json
