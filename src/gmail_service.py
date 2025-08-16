@@ -1,14 +1,17 @@
+# src/gmail_service.py
+
 import os.path
 import base64
 import json
 from email.message import EmailMessage
-from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from utils.secret_manager import get_secret
 
-# Ensure you have the correct scopes for reading and sending
+# This is the version that uses the token.json from Secrets Manager
+# It is the correct version for your AWS Lambda environment.
+
 SCOPES = [
     "https://www.googleapis.com/auth/gmail.readonly",
     "https://www.googleapis.com/auth/gmail.send"
@@ -17,37 +20,34 @@ SCOPES = [
 def get_gmail_service():
     """
     Authenticates with the Gmail API using a token stored in an environment variable.
-    This method is designed for server-side execution for short-term tests.
     """
-    token_json_str = os.getenv("GMAIL_TOKEN_JSON")
+    token_json_str = get_secret("prod/CustomerAgent/GmailTokenS")
+    
     if not token_json_str:
         print("❌ GMAIL_TOKEN_JSON environment variable not set.")
         return None
 
     try:
-        # Load the credentials directly from the JSON string
-        creds_info = json.loads(token_json_str)
-        creds = Credentials.from_authorized_user_info(creds_info, SCOPES)
-        
+        creds = Credentials.from_authorized_user_info(token_json_str, SCOPES)
         service = build("gmail", "v1", credentials=creds)
         return service
-    except (json.JSONDecodeError, ValueError) as e:
-        print(f"❌ Error parsing token credentials: {e}")
-        return None
-    except HttpError as error:
-        print(f"An error occurred during authentication: {error}")
+    except Exception as e:
+        print(f"❌ Error during Gmail authentication: {e}")
         return None
 
 def get_latest_email(service, user_id="me"):
     """
-    Fetches the most recent unread email and returns its details as a dictionary.
+    Fetches the most recent unread email ONLY from a specific sender.
     """
     try:
-        results = service.users().messages().list(userId=user_id, q="from:nathanfrederick3@gmail.com", maxResults=1).execute()
+        # This query now filters for unread emails specifically from your address.
+        query = "is:unread from:nathanfrederick3@gmail.com"
+        print(f"Searching for emails with query: '{query}'")
+        
+        results = service.users().messages().list(userId=user_id, q=query, maxResults=1).execute()
         messages = results.get("messages", [])
 
         if not messages:
-            # Return None if no new messages are found
             return None
 
         msg_id = messages[0]["id"]
@@ -66,7 +66,7 @@ def get_latest_email(service, user_id="me"):
         body = "No Body Content"
         if "parts" in payload and payload.get('parts'):
             part = payload['parts'][0]
-            if part['body'] and 'data' in part['body']:
+            if part.get('body') and 'data' in part['body']:
                 data = part['body']['data']
                 body = base64.urlsafe_b64decode(data).decode("utf-8")
         elif 'body' in payload and 'data' in payload['body']:
@@ -77,7 +77,6 @@ def get_latest_email(service, user_id="me"):
         
         print(f"--- New Email Found ---")
         print(f"From: {email_data['sender']}")
-        print(f"Subject: {email_data['subject']}")
         
         return email_data
 

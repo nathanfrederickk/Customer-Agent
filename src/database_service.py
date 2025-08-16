@@ -1,12 +1,16 @@
 import psycopg2
 import os
+from utils.secret_manager import get_secret
+
+db_secret_data = get_secret("prod/CustomerAgent/DatabasePassword")
 
 # --- Database Connection ---
 DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_PASSWORD = db_secret_data['password']
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
+
 
 def get_db_connection():
     """Establishes a connection to the PostgreSQL database using environment variables."""

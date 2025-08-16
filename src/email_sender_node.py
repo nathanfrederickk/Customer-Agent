@@ -1,6 +1,4 @@
-# src/email_sender_node.py
-
-from gmail_service import send_email
+from src.gmail_service import send_email
 
 def email_sender_node(state, service):
     """
