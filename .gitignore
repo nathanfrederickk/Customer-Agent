@@ -40,6 +40,7 @@ coverage.xml
 
 # Environments
 credentials.json
+admin_token.json
 token.json
 google-service-account.json
 .env
